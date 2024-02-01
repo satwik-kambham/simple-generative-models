@@ -1,0 +1,36 @@
+name: generative_models
+channels:
+  - pytorch
+  - nvidia
+  - nvidia/label/cuda-12.1.0
+  - conda-forge
+  - huggingface
+dependencies:
+  - python=3.10
+  - pip
+  - setuptools
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=12.1
+  - lightning
+  - torchmetrics
+  - torchinfo
+  - wandb
+  - cuda-nvcc
+  - numpy
+  - pandas
+  - matplotlib
+  - bokeh
+  - jupyter
+  - jupyterlab
+  - ipython
+  - ipywidgets
+  - tensorboard
+  - gradio
+  - onnx
+  - onnxruntime
+  - tqdm
+  - pip:
+      - 'black[jupyter]'
+      - flake8
