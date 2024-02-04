@@ -5,68 +5,6 @@ import torch.nn as nn
 from torchvision.utils import make_grid
 
 
-class Generator(nn.Module):
-    def __init__(self, n_latent):
-        super().__init__()
-        self.gen = nn.Sequential(
-            nn.ConvTranspose2d(n_latent, 512, 5, 2),
-            nn.BatchNorm2d(512),
-            nn.Dropout(0.1),
-            nn.LeakyReLU(0.2),
-            nn.ConvTranspose2d(512, 256, 5),
-            nn.BatchNorm2d(256),
-            nn.LeakyReLU(0.2),
-            nn.ConvTranspose2d(256, 128, 4, 2),
-            nn.BatchNorm2d(128),
-            nn.LeakyReLU(0.2),
-            nn.ConvTranspose2d(128, 64, 4),
-            nn.BatchNorm2d(64),
-            nn.Dropout(0.1),
-            nn.LeakyReLU(0.2),
-            nn.ConvTranspose2d(64, 32, 4),
-            nn.BatchNorm2d(32),
-            nn.LeakyReLU(0.2),
-            nn.ConvTranspose2d(32, 1, 3),
-            nn.Tanh(),
-        )
-
-    def forward(self, x):
-        return self.gen(x)
-
-
-class Discriminator(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.conv = nn.Sequential(
-            nn.Conv2d(1, 32, 5),
-            nn.LeakyReLU(0.2),
-            nn.Conv2d(32, 16, 5),
-            nn.BatchNorm2d(16),
-            nn.LeakyReLU(0.2),
-            nn.Conv2d(16, 8, 3),
-            nn.BatchNorm2d(8),
-            nn.LeakyReLU(0.2),
-            nn.Conv2d(8, 4, 3),
-            nn.BatchNorm2d(4),
-            nn.LeakyReLU(0.2),
-        )
-        self.flatten = nn.Flatten()
-        self.fc = nn.Sequential(
-            nn.Linear(1024, 512),
-            nn.Dropout(0.1),
-            nn.ReLU(),
-            nn.Linear(512, 64),
-            nn.ReLU(),
-            nn.Linear(64, 1),
-        )
-
-    def forward(self, x):
-        out = self.conv(x)
-        out = self.flatten(out)
-        out = self.fc(out)
-        return out
-
-
 class DCGAN(L.LightningModule):
     def __init__(self, n_latent=100, lr=1e-5):
         super().__init__()
@@ -133,3 +71,65 @@ class DCGAN(L.LightningModule):
         optimizer_g = torch.optim.Adam(self.gen.parameters(), 1e-4, betas=(0.5, 0.999))
         optimizer_d = torch.optim.Adam(self.dis.parameters(), 1e-4, betas=(0.5, 0.999))
         return optimizer_g, optimizer_d
+
+
+class Generator(nn.Module):
+    def __init__(self, n_latent):
+        super().__init__()
+        self.gen = nn.Sequential(
+            nn.ConvTranspose2d(n_latent, 512, 5, 2),
+            nn.BatchNorm2d(512),
+            nn.Dropout(0.1),
+            nn.LeakyReLU(0.2),
+            nn.ConvTranspose2d(512, 256, 5),
+            nn.BatchNorm2d(256),
+            nn.LeakyReLU(0.2),
+            nn.ConvTranspose2d(256, 128, 4, 2),
+            nn.BatchNorm2d(128),
+            nn.LeakyReLU(0.2),
+            nn.ConvTranspose2d(128, 64, 4),
+            nn.BatchNorm2d(64),
+            nn.Dropout(0.1),
+            nn.LeakyReLU(0.2),
+            nn.ConvTranspose2d(64, 32, 4),
+            nn.BatchNorm2d(32),
+            nn.LeakyReLU(0.2),
+            nn.ConvTranspose2d(32, 1, 3),
+            nn.Tanh(),
+        )
+
+    def forward(self, x):
+        return self.gen(x)
+
+
+class Discriminator(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = nn.Sequential(
+            nn.Conv2d(1, 32, 5),
+            nn.LeakyReLU(0.2),
+            nn.Conv2d(32, 16, 5),
+            nn.BatchNorm2d(16),
+            nn.LeakyReLU(0.2),
+            nn.Conv2d(16, 8, 3),
+            nn.BatchNorm2d(8),
+            nn.LeakyReLU(0.2),
+            nn.Conv2d(8, 4, 3),
+            nn.BatchNorm2d(4),
+            nn.LeakyReLU(0.2),
+        )
+        self.flatten = nn.Flatten()
+        self.fc = nn.Sequential(
+            nn.Linear(1024, 512),
+            nn.Dropout(0.1),
+            nn.ReLU(),
+            nn.Linear(512, 64),
+            nn.ReLU(),
+            nn.Linear(64, 1),
+        )
+
+    def forward(self, x):
+        out = self.conv(x)
+        out = self.flatten(out)
+        out = self.fc(out)
+        return out

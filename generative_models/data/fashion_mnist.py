@@ -1,7 +1,7 @@
 import lightning as L
 import torch
 from torch.utils.data import DataLoader
-from torchvision.datasets import FashionMNIST as MNIST
+from torchvision.datasets import MNIST as MNIST
 from torchvision.transforms import v2
 
 
@@ -50,4 +50,5 @@ class FashionMNISTDataModule(L.LightningDataModule):
             self.val_ds,
             batch_size=self.hparams["batch_size"],
             num_workers=self.hparams["num_workers"],
+            drop_last=True,
         )
